@@ -1,8 +1,8 @@
 @extends('admin.layout.main')
 @section('admin')
     <!--**********************************
-                                                                            Content body start
-                                                                        ***********************************-->
+                                                                                                                                                                        Content body start
+                                                                                                                                                                    ***********************************-->
     <div class="content-body">
 
         <div class="row page-titles mx-0 mt-3">
@@ -25,8 +25,23 @@
                         <div class="card-body">
                             <div class="table-responsive">
                                 <div class="d-flex justify-content-end align-items-center">
-                                    <a href="{{ Route('admin.addOrderStatus') }}" class="btn btn-primary">Add Item</a>
+                                    <a href="{{ Route('admin.addOrderStatus') }}" class="btn btn-primary">Add Order
+                                        Status</a>
                                 </div>
+                                @if (session('error'))
+                                    <div class="alert alert-danger alert-dismissible">
+                                        <button type="button" class="close" data-dismiss="alert"
+                                            aria-hidden="true">×</button>
+                                        {{ session('error') }}
+                                    </div>
+                                @endif
+                                @if (session('success'))
+                                    <div class="alert alert-success alert-dismissible">
+                                        <button type="button" class="close" data-dismiss="alert"
+                                            aria-hidden="true">×</button>
+                                        {{ session('success') }}
+                                    </div>
+                                @endif
                                 <table class="table table-striped table-bordered zero-configuration">
                                     <thead>
                                         <tr>
@@ -40,7 +55,6 @@
                                     </thead>
                                     <tbody>
                                         <tr>
-
                                             <td>1</td>
                                             <td>
                                                 <div class="d-flex algin-items-center">
@@ -90,6 +104,6 @@
         <!-- #/ container -->
     </div>
     <!--**********************************
-                                                                            Content body end
-                                                                        ***********************************-->
+                                                                                                                                                                        Content body end
+                                                                                                                                                                    ***********************************-->
 @endsection

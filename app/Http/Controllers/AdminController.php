@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Admin;
 use App\Models\orders;
+use App\Models\OrderStatus;
+use App\Models\ShippingType;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -114,8 +116,8 @@ class AdminController extends Controller
     public function order_management()
     {
         $title = "Order Management";
-        $orders = Orders::all();
-        $data = compact('title', 'orders');
+        // $orders = Orders::all();
+        $data = compact('title', );
         return view('admin.order-management')->with($data);
     }
 
@@ -150,14 +152,62 @@ class AdminController extends Controller
     public function shipping_type()
     {
         $title = "Shipping Type";
-        $data = compact('title');
+        $shippingType = ShippingType::all();
+        $data = compact('title', 'shippingType');
         return view('admin.shipping-type')->with($data);
     }
-    public function edit_shipping_type()
+    public function add_shipping_type()
+    {
+        $title = "Add Shipping Type";
+        $data = compact('title');
+        return view('admin.add-shipping-type')->with($data);
+    }
+
+    public function add_shipping_type_db(Request $request)
+    {
+        $request->validate([
+            "main_type" => "required",
+            "status" => "required",
+        ]);
+        $shipping = new ShippingType;
+        $shipping->main_type = $request->main_type;
+        $shipping->color = $request->color;
+        $shipping->status = $request->status;
+        $shipping->save();
+
+        return redirect()->route('admin.shippingType')->with('success', 'Shipping Type Successfully Added');
+    }
+    public function edit_shipping_type(Request $request)
     {
         $title = "Edit Shipping Type";
-        $data = compact('title');
+        $shippingType = ShippingType::find($request->id);
+        $data = compact('title', 'shippingType');
         return view('admin.edit-shipping-type')->with($data);
+    }
+
+    public function edit_shipping_type_db(Request $request)
+    {
+        $request->validate([
+            "main_type" => "required",
+            "status" => "required",
+        ]);
+        $title = "Edit Shipping Type";
+        $shippingType = ShippingType::where('id', $request->id)->update([
+            "main_type" => $request->main_type,
+            "color" => $request->color,
+            "status" => $request->status,
+        ]);
+        $data = compact('title', 'shippingType');
+        return redirect()->route('admin.shippingType')->with($data)->with('success', 'Shipping Type Successfully Updated');
+    }
+
+    public function delete_shipping_type_db(Request $request)
+    {
+        $title = "Shipping Type";
+        ShippingType::where('id', $request->id)->delete();
+        $shippingType = ShippingType::all();
+        $data = compact('title', 'shippingType');
+        return redirect()->back()->with($data)->with('success', 'Shipping Type Successfully Deleted');
     }
 
     public function order_status()
@@ -170,8 +220,37 @@ class AdminController extends Controller
     public function add_order_status()
     {
         $title = "Add Order Status";
-        $data = compact('title');
+        $shippingType = ShippingType::all();
+        $data = compact('title', 'shippingType');
         return view('admin.add-order-status')->with($data);
+    }
+
+    public function add_order_status_db(Request $request)
+    {
+
+        $request->validate([
+            'main_type_id' => 'required',
+            'status_type' => 'required',
+            'status' => 'required',
+            'image' => 'required|mimes:png,jpg,jpeg,svg',
+        ]);
+
+
+        if ($request->hasFile('image')) {
+            $fileName = time() . '.' . $request->image->extension();
+            $request->image->move(public_path('orderStatus'), $fileName);
+        }
+
+        $newOrderStatus = new OrderStatus;
+        $newOrderStatus->main_type_id = $request->main_type_id;
+        $newOrderStatus->status_type = $request->status_type;
+        $newOrderStatus->status = $request->status;
+        $newOrderStatus->image = $fileName;
+        $newOrderStatus->save();
+
+        $title = "Add Order Status";
+        $data = compact('title');
+        return redirect()->route('admin.orderStatus')->with($data)->with('success', 'Order Status Successfully Added');
     }
 
     public function edit_order_status()

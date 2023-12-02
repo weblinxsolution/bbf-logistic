@@ -1,8 +1,8 @@
 @extends('admin.layout.main')
 @section('admin')
     <!--**********************************
-                                                                                                                                                                                                                                                                                                                                                                                        Content body start
-                                                                                                                                                                                                                                                                                                                                                                                    ***********************************-->
+                                                                                                                                                                                                                                                                                                                                                                                            Content body start
+                                                                                                                                                                                                                                                                                                                                                                                        ***********************************-->
     <div class="content-body">
 
         <div class="row page-titles mx-0 mt-3">
@@ -137,6 +137,6 @@
         <!-- #/ container -->
     </div>
     <!--**********************************
-                                                                                                                                                                                                                                                                                                                                                                                        Content body end
-                                                                                                                                                                                                                                                                                                                                                                                    ***********************************-->
+                                                                                                                                                                                                                                                                                                                                                                                            Content body end
+                                                                                                                                                                                                                                                                                                                                                                                        ***********************************-->
 @endsection

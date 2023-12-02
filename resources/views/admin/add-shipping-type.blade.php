@@ -1,8 +1,8 @@
 @extends('admin.layout.main')
 @section('admin')
     <!--**********************************
-                                                                                                                                                                                                                                                                                                                                                                                                                                                Content body start
-                                                                                                                                                                                                                                                                                                                                                                                                                                            ***********************************-->
+                                                                                                                                                                                                                                                                                                                                                                                                                                Content body start
+                                                                                                                                                                                                                                                                                                                                                                                                                            ***********************************-->
     <div class="content-body">
 
         <div class="row page-titles mx-0 mt-3">
@@ -38,40 +38,32 @@
                                         {{ session('success') }}
                                     </div>
                                 @endif
-                                <form action="{{ Route('admin.editShippingTypeDb', ['id' => $shippingType->id]) }}"
-                                    method="POST">
+                                <form action="{{ Route('admin.addShippingTypeDb') }}" method="POST">
                                     @csrf
                                     <div class="form-row">
                                         <div class="form-group col-md-4">
                                             <label>Main Type</label>
                                             <select class="form-control" id="" required name="main_type">
                                                 <option value="" selected>Choose Type</option>
-                                                <option value="import"
-                                                    {{ $shippingType->main_type == 'import' ? 'selected' : '' }}>Import
-                                                </option>
-                                                <option value="export"
-                                                    {{ $shippingType->main_type == 'export' ? 'selected' : '' }}>Export
-                                                </option>
+                                                <option value="import">Import</option>
+                                                <option value="export">Export</option>
                                             </select>
                                         </div>
                                         <div class="form-group col-md-4">
                                             <label>Status</label>
                                             <select class="form-control" id="" required name="status">
                                                 <option value="" selected>Choose Type</option>
-                                                <option value="1" {{ $shippingType->status == '1' ? 'selected' : '' }}>
-                                                    Active</option>
-                                                <option value="0" {{ $shippingType->status == '0' ? 'selected' : '' }}>
-                                                    Inactive</option>
+                                                <option value="1">Active</option>
+                                                <option value="0">Inactive</option>
                                             </select>
                                         </div>
                                         <div class="form-group col-md-4">
                                             <label>Choose Color</label>
-                                            <input type="color" value="{{ $shippingType->color }}" class="form-control"
-                                                required name="color">
+                                            <input type="color" class="form-control" required name="color">
                                         </div>
                                     </div>
                                     <hr class="mt-0">
-                                    <button type="submit" class="btn btn-dark d-block ml-auto">Save Changes</button>
+                                    <button type="submit" class="btn btn-dark d-block ml-auto">Add Shipping Type</button>
                                 </form>
                             </div>
                         </div>
@@ -82,6 +74,6 @@
         <!-- #/ container -->
     </div>
     <!--**********************************
-                                                                                                                                                                                                                                                                                                                                                                                                                                                Content body end
-                                                                                                                                                                                                                                                                                                                                                                                                                                            ***********************************-->
+                                                                                                                                                                                                                                                                                                                                                                                                                                Content body end
+                                                                                                                                                                                                                                                                                                                                                                                                                            ***********************************-->
 @endsection

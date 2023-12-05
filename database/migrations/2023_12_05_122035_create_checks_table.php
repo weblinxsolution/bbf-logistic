@@ -10,11 +10,12 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('admins', function (Blueprint $table) {
+        Schema::create('checks', function (Blueprint $table) {
             $table->id();
-            $table->string('admin');
-            $table->string('email')->unique();
-            $table->string('password');
+            $table->unsignedBigInteger('container_id');
+            $table->string('check');
+            $table->string('status')->nullable(0);
+            $table->foreign('container_id')->references('id')->on('containers')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -24,6 +25,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('admins');
+        Schema::dropIfExists('checks');
     }
 };

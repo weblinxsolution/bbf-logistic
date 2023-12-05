@@ -1,8 +1,8 @@
 @extends('admin.layout.main')
 @section('admin')
     <!--**********************************
-                            Content body start
-                        ***********************************-->
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    Content body start
+                                                                                                                                                                                                                                                                                                                                                                                                                                                ***********************************-->
     <div class="content-body">
 
         <div class="row page-titles mx-0 mt-3">
@@ -29,7 +29,7 @@
                                     <thead>
                                         <tr>
                                             <th>ID</th>
-                                            <th>ACTION</th>
+                                            {{-- <th>ACTION</th> --}}
                                             <th>STATUS NAME</th>
                                             <th>INVOICE NO</th>
                                             <th>SHIPPER NAME</th>
@@ -39,25 +39,28 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>12</td>
-                                            <td>
-                                                <div class="d-flex algin-items-center">
-                                                    <a href="{{ Route('admin.editOrder') }}"
-                                                        class="btn btn-primary btn-sm mr-2"><i class="fa fa-pencil "></i>
-                                                    </a>
-                                                    <a href="#" class="btn btn-danger btn-sm"><i
-                                                            class="fa fa-trash"></i>
-                                                    </a>
-                                                </div>
-                                            </td>
-                                            <td>Cargo Picked Up</td>
-                                            <td><a href="order-tracking.php">3234215435</a></td>
-                                            <td>Hitachi Astemo, Chonburi</td>
-                                            <td>Armstrong Auto Parts, Melaka</td>
-                                            <td>1.Truck no :71-3715/71-5344 Dr.</td>
-                                            <td>11/22/2023</td>
-                                        </tr>
+                                        @foreach ($orders as $order)
+                                            <tr>
+                                                <td>{{ $loop->iteration }}</td>
+                                                <td>
+                                                    @foreach ($order->orderStatus as $status)
+                                                        {{ $status->status_type }}
+                                                    @endforeach
+                                                </td>
+                                                <td><a href="order-tracking.php">
+                                                        {{ $order->invoice_no }}</a></td>
+                                                <td>{{ $order->shipper_name }}</td>
+                                                <td>{{ $order->consignee_name }}</td>
+                                                <td>
+                                                    @foreach ($order->containers as $con)
+                                                        {{ $con->cargo_remark }}
+                                                    @endforeach
+                                                </td>
+                                                <td>
+                                                    {{ $order->updated_at->format('d-m-y ') }}
+                                                </td>
+                                            </tr>
+                                        @endforeach
                                     </tbody>
                                 </table>
                             </div>
@@ -87,6 +90,6 @@
         <!-- #/ container -->
     </div>
     <!--**********************************
-                            Content body end
-                        ***********************************-->
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    Content body end
+                                                                                                                                                                                                                                                                                                                                                                                                                                                ***********************************-->
 @endsection

@@ -1,8 +1,8 @@
 @extends('admin.layout.main')
 @section('admin')
     <!--**********************************
-                    Content body start
-                ***********************************-->
+                                                                                                                                                                                                                                                                                                                                                                            Content body start
+                                                                                                                                                                                                                                                                                                                                                                        ***********************************-->
     <div class="content-body">
 
         <div class="row page-titles mx-0 mt-3">
@@ -24,20 +24,20 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="basic-form">
-                                <form>
+                                <form action="{{ Route('admin.addBookingSizeDb') }}" method="POST">
+                                    @csrf
                                     <div class="form-row">
                                         <div class="form-group col-md-2">
                                             <label class="mt-3">Book Size</label>
 
                                         </div>
                                         <div class="form-group col-md-10">
-
-                                            <input type="text" class="form-control" placeholder="Booking Size">
+                                            <input type="text" class="form-control" placeholder="Booking Size"
+                                                name="booking_size">
                                         </div>
-
                                     </div>
                                     <hr class="mt-0">
-                                    <button type="submit" class="btn btn-dark d-block ml-auto">Save</button>
+                                    <button type="submit" class="btn btn-dark d-block ml-auto">{{ $title }}</button>
                                 </form>
                             </div>
                         </div>
@@ -48,6 +48,6 @@
         <!-- #/ container -->
     </div>
     <!--**********************************
-                    Content body end
-                ***********************************-->
+                                                                                                                                                                                                                                                                                                                                                                            Content body end
+                                                                                                                                                                                                                                                                                                                                                                        ***********************************-->
 @endsection

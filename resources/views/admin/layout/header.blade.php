@@ -100,7 +100,8 @@
                                                 <span>Update Password</span></a>
                                         </li>
 
-                                        <li><a href="#"><i class="icon-key"></i> <span>Logout</span></a>
+                                        <li><a href="{{ Route('admin.logout') }}"><i class="icon-key"></i>
+                                                <span>Logout</span></a>
                                         </li>
                                     </ul>
                                 </div>

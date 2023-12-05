@@ -1,8 +1,8 @@
 @extends('admin.layout.main')
 @section('admin')
     <!--**********************************
-                                                                                                                                                                                                                                                                                                                                                                                                                Content body start
-                                                                                                                                                                                                                                                                                                                                                                                                            ***********************************-->
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            Content body start
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ***********************************-->
     <div class="content-body">
 
         <div class="row page-titles mx-0 mt-3">
@@ -45,7 +45,7 @@
                                         <div class="form-group col-md-6">
                                             <label>Main Type</label>
                                             <select class="form-control" name="main_type_id" required>
-                                                <option>Select main type</option>
+                                                <option value="" selected>Select main type</option>
                                                 @isset($shippingType)
                                                     @foreach ($shippingType as $type)
                                                         <option value="{{ $type->id }}">{{ $type->main_type }}</option>
@@ -60,11 +60,12 @@
                                         </div>
                                         <div class="form-group col-md-12">
                                             <label>Images</label>
-                                            <input type="file" class="form-control" name="image">
+                                            <input type="file" class="form-control" name="image" required>
                                         </div>
                                         <div class="form-group col-md-12 d-flex" style="gap: 10px;">
                                             <div class="form-group mb-0">
-                                                <input type="radio" id="first-status" value="first-status" name="status">
+                                                <input type="radio" id="first-status" value="first-status" name="status"
+                                                    checked>
                                                 <label for="first-status">First Status</label>
                                             </div>
                                             <div class="form-group mb-0">
@@ -89,6 +90,6 @@
         <!-- #/ container -->
     </div>
     <!--**********************************
-                                                                                                                                                                                                                                                                                                                                                                                                                Content body end
-                                                                                                                                                                                                                                                                                                                                                                                                            ***********************************-->
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            Content body end
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ***********************************-->
 @endsection

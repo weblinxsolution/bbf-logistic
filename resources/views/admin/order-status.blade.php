@@ -1,8 +1,8 @@
 @extends('admin.layout.main')
 @section('admin')
     <!--**********************************
-                                                                                                                                                                        Content body start
-                                                                                                                                                                    ***********************************-->
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            Content body start
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ***********************************-->
     <div class="content-body">
 
         <div class="row page-titles mx-0 mt-3">
@@ -50,31 +50,75 @@
                                             <th>DATE</th>
                                             <th>STATUS TYPE</th>
                                             <th>MAIN TYPE</th>
+                                            <th>STATUS</th>
                                             <th>IMAGE</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>1</td>
-                                            <td>
-                                                <div class="d-flex algin-items-center">
-                                                    <a href="{{ Route('admin.editOrderStatus') }}"
-                                                        class="btn btn-primary btn-sm mr-2"><i class="fa fa-pencil "></i>
-                                                    </a>
-                                                    <a href="#" class="btn btn-danger btn-sm"><i
-                                                            class="fa fa-trash"></i>
-                                                    </a>
-                                                </div>
-                                            </td>
-                                            <td>2011/01/25</td>
-                                            <td>Order Created</td>
-                                            <td>
-                                                Import
-                                            </td>
-                                            <td>
-                                                Import
-                                            </td>
-                                        </tr>
+                                        @isset($orderStatus)
+                                            @foreach ($orderStatus as $status)
+                                                <tr>
+                                                    <td>{{ $loop->iteration }}</td>
+                                                    <td>
+                                                        <div class="d-flex algin-items-center">
+                                                            <a href="{{ Route('admin.editOrderStatus', ['id' => $status->id]) }}"
+                                                                class="btn btn-primary btn-sm mr-2"><i
+                                                                    class="fa fa-pencil "></i>
+                                                            </a>
+                                                            <a href="javascript:void()" data-toggle="modal"
+                                                                data-target="#delete{{ $status->id }}"
+                                                                class="btn btn-danger btn-sm"><i class="fa fa-trash"></i>
+                                                            </a>
+                                                        </div>
+                                                    </td>
+                                                    <td>{{ $status->created_at->format('d-m-y') }}</td>
+                                                    <td>{{ $status->status_type }}</td>
+                                                    <td>
+                                                        @foreach ($status->shipping_types as $type)
+                                                            {{ $type->main_type }}
+                                                        @endforeach
+                                                    </td>
+                                                    <td><span class="badge bg-success text-white"
+                                                            style="font-size: 12px;">{{ $status->status }}</span>
+                                                    </td>
+                                                    <td>
+                                                        <img src="{{ asset('orderStatus/' . $status->image) }}" width="130px"
+                                                            alt="image">
+
+                                                        {{-- Modal For Deletion Of Users  --}}
+                                                        <!-- Modal -->
+                                                        <div class="modal fade" id="delete{{ $status->id }}" tabindex="-1"
+                                                            role="dialog" aria-labelledby="exampleModalLabel"
+                                                            aria-hidden="true">
+                                                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <h5 class="modal-title" id="exampleModalLabel">Delete
+                                                                            Modal</h5>
+                                                                        <button type="button" class="close"
+                                                                            data-dismiss="modal" aria-label="Close">
+                                                                            <span aria-hidden="true">&times;</span>
+                                                                        </button>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <h4 class="mb-0">Are you Sure?</h4>
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                        <button type="button"
+                                                                            class="btn text-white btn-secondary"
+                                                                            data-dismiss="modal">Close</button>
+                                                                        <a href="{{ Route('admin.deleteOrderStatusDb', ['id' => $status->id]) }}"
+                                                                            class="btn btn-danger text-decoration-none text-white">Yes,
+                                                                            Delete</a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        {{-- End Modal  --}}
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        @endisset
                                     </tbody>
                                 </table>
                             </div>
@@ -104,6 +148,6 @@
         <!-- #/ container -->
     </div>
     <!--**********************************
-                                                                                                                                                                        Content body end
-                                                                                                                                                                    ***********************************-->
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            Content body end
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ***********************************-->
 @endsection

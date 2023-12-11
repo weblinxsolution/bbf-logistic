@@ -158,6 +158,11 @@
                             <!-- <li><a href="update-password.php" aria-expanded="false">Update Password</a></li> -->
                         </ul>
                     </li>
+                    {{-- <li>
+                        <a href="{{ Route('admin.orderTracking') }}" aria-expanded="false">
+                            <i class="icon-graduation menu-icon"></i> <span class="nav-text"> Order Tracking</span>
+                        </a>
+                    </li> --}}
                     <li>
                         <a href="{{ Route('admin.orderHistory') }}" aria-expanded="false">
                             <i class="icon-graduation menu-icon"></i> <span class="nav-text"> Order History</span>

@@ -1,8 +1,8 @@
 @extends('admin.layout.main')
 @section('admin')
     <!--**********************************
-                                                                                                                                                                                                                                                                                                                                                                                                                                                Content body start
-                                                                                                                                                                                                                                                                                                                                                                                                                                            ***********************************-->
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    Content body start
+                                                                                                                                                                                                                                                                                                                                                                                                                                                ***********************************-->
     <div class="content-body">
 
         <div class="row page-titles mx-0 mt-3">
@@ -44,15 +44,8 @@
                                     <div class="form-row">
                                         <div class="form-group col-md-4">
                                             <label>Main Type</label>
-                                            <select class="form-control" id="" required name="main_type">
-                                                <option value="" selected>Choose Type</option>
-                                                <option value="import"
-                                                    {{ $shippingType->main_type == 'import' ? 'selected' : '' }}>Import
-                                                </option>
-                                                <option value="export"
-                                                    {{ $shippingType->main_type == 'export' ? 'selected' : '' }}>Export
-                                                </option>
-                                            </select>
+                                            <input class="form-control" id=""
+                                                value="{{ $shippingType->main_type }}" required name="main_type">
                                         </div>
                                         <div class="form-group col-md-4">
                                             <label>Status</label>
@@ -82,6 +75,6 @@
         <!-- #/ container -->
     </div>
     <!--**********************************
-                                                                                                                                                                                                                                                                                                                                                                                                                                                Content body end
-                                                                                                                                                                                                                                                                                                                                                                                                                                            ***********************************-->
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    Content body end
+                                                                                                                                                                                                                                                                                                                                                                                                                                                ***********************************-->
 @endsection

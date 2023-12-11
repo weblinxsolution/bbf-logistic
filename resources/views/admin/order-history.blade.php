@@ -1,8 +1,8 @@
 @extends('admin.layout.main')
 @section('admin')
     <!--**********************************
-                                                                                                                                                                                                                                                                                                                                                                                                                                                    Content body start
-                                                                                                                                                                                                                                                                                                                                                                                                                                                ***********************************-->
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    Content body start
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ***********************************-->
     <div class="content-body">
 
         <div class="row page-titles mx-0 mt-3">
@@ -47,14 +47,13 @@
                                                         {{ $status->status_type }}
                                                     @endforeach
                                                 </td>
-                                                <td><a href="order-tracking.php">
-                                                        {{ $order->invoice_no }}</a></td>
+                                                <td><a
+                                                        href="{{ Route('admin.orderTracking', ['invoice' => $order->invoice_no]) }}">{{ $order->invoice_no }}</a>
+                                                </td>
                                                 <td>{{ $order->shipper_name }}</td>
                                                 <td>{{ $order->consignee_name }}</td>
                                                 <td>
-                                                    @foreach ($order->containers as $con)
-                                                        {{ $con->cargo_remark }}
-                                                    @endforeach
+                                                    {{ $order->cargo_remark }}
                                                 </td>
                                                 <td>
                                                     {{ $order->updated_at->format('d-m-y ') }}
@@ -90,6 +89,6 @@
         <!-- #/ container -->
     </div>
     <!--**********************************
-                                                                                                                                                                                                                                                                                                                                                                                                                                                    Content body end
-                                                                                                                                                                                                                                                                                                                                                                                                                                                ***********************************-->
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    Content body end
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ***********************************-->
 @endsection

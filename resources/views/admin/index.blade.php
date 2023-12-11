@@ -1,8 +1,8 @@
 @extends('admin.layout.main')
 @section('admin')
     <!--**********************************
-                Content body start
-            ***********************************-->
+                                                                                                                                                                                                                                                                                                    Content body start
+                                                                                                                                                                                                                                                                                                ***********************************-->
     <div class="content-body">
 
         <div class="container-fluid mt-3">
@@ -93,6 +93,7 @@
                                 <table class="table table-striped table-bordered zero-configurations">
                                     <thead>
                                         <tr>
+                                            <th>#SR</th>
                                             <th>PICKUP DATE </th>
                                             <th>INVOICE NO.</th>
                                             <th>TRANSIT TIME</th>
@@ -101,14 +102,27 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
+                                        @isset($orders)
+                                            @foreach ($orders as $order)
+                                                <tr>
+                                                    <td>{{ $loop->iteration }}</td>
+                                                    <td>{{ \Carbon\Carbon::parse($order->pickup_date)->format('d-m-y') }}</td>
+                                                    <td><a
+                                                            href="{{ Route('admin.orderTracking', ['invoice' => $order->invoice_no]) }}">{{ $order->invoice_no }}</a>
+                                                    </td>
+                                                    <td>
+                                                        @php
+                                                            $date1 = \Carbon\Carbon::parse($order->created_order_date);
+                                                            $date2 = \Carbon\Carbon::parse($order->final_order_date);
+                                                            $diffInDays = $date1->diffInDays($date2);
+                                                        @endphp
+                                                        {{ $diffInDays }} Days
+                                                    </td>
+                                                    <td>2 days</td>
 
-                                            <td>01-12-2023</td>
-                                            <td><a href="order-tracking.php">3234215435</a></td>
-                                            <td>5 days</td>
-                                            <td>2 days</td>
-
-                                        </tr>
+                                                </tr>
+                                            @endforeach
+                                        @endisset
                                     </tbody>
                                 </table>
                             </div>

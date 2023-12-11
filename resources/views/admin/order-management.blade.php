@@ -70,15 +70,17 @@
                                                 <td>{{ $loop->iteration }}</td>
                                                 <td>
                                                     <div class="d-flex align-items-center">
-                                                        <button type="submit" class="btn btn-dark w-75 my-1"><i
-                                                                class="fa-regular fa-eye"></i></button>
-                                                        <button type="submit" class="ml-2 btn btn-dark  W-100"><i
-                                                                class="fa-solid fa-file-arrow-down"></i></button>
+                                                        <a href="{{ asset('documents/' . $order->document) }}"
+                                                            class="btn btn-dark w-75 my-1"><i class="fa-regular fa-eye"></i></a>
+                                                        <a href="{{ asset('documents/' . $order->document) }}" download
+                                                            class="ml-2 btn btn-dark  W-100"><i
+                                                                class="fa-solid fa-file-arrow-down"></i></a>
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
-                                                        data-target="#Add_status{{ $order->id }}">Add Status</button>
+                                                        data-target="#Add_status{{ $order->id }}"
+                                                        onclick="add_status(this.$order->id)">Add Status</button>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex algin-items-center">
@@ -97,142 +99,157 @@
                                                         {{ $user->email }}
                                                     @endforeach
                                                 </td>
-                                                <td><a href="order-tracking.php">{{ $order->invoice_no }}</a></td>
+                                                <td><a
+                                                        href="{{ Route('admin.orderTracking', ['invoice' => $order->invoice_no]) }}">{{ $order->invoice_no }}</a>
+                                                </td>
                                                 <td>
                                                     @foreach ($order->orderStatus as $status)
                                                         {{ $status->status_type }}
                                                     @endforeach
                                                 </td>
                                                 <td>
-                                                    @foreach ($order->containers as $con)
+                                                    {{-- @foreach ($order->containers->unique('booking_size_id') as $con)
                                                         @php
                                                             $bookingSize = App\Models\BookingSize::find($con->booking_size_id);
                                                         @endphp
                                                         <span class="badge badge-success text-white mb-1"
                                                             style="font-size: 12px;">{{ $bookingSize->booking_size }}</span>
-                                                    @endforeach
+                                                    @endforeach --}}
                                                 </td>
 
                                                 <td>
-                                                    @foreach ($order->containers as $con)
-                                                        {{ $con->admin_remark }}
-                                                    @endforeach
+                                                    {{ $order->admin_remark }}
                                                 </td>
                                                 <td>
-                                                    @foreach ($order->containers as $con)
-                                                        <span>
-                                                            {{ $con->customer_remark }}
-                                                        </span>
-                                                    @endforeach
+                                                    {{ $order->customer_remark }}
                                                 </td>
                                                 <td>{{ $order->added_by }}</td>
                                                 <td>{{ $order->pickup_date }}</td>
                                                 <td>
                                                     {{ $order->created_at->format('m-y-d') }}
-                                                    <div class="modal fade" id="Add_status{{ $order->id }}">
-                                                        <div class="modal-dialog modal-dialog-centered" role="document">
-                                                            <div class="modal-content">
-                                                                <div class="modal-header">
-                                                                    <h5 class="modal-title">Add Status</h5>
-                                                                    <button type="button" class="close"
-                                                                        data-dismiss="modal"><span>&times;</span>
-                                                                    </button>
-                                                                </div>
-                                                                <div class="modal-body">
-                                                                    <form>
-                                                                        <div class="form-row">
-                                                                            <div class="form-group col-md-12">
-                                                                                <label>Order Status</label>
-                                                                                <select id="" name="status_type"
-                                                                                    class="form-control">
-                                                                                    @foreach ($orderStatus as $status_id)
-                                                                                        @foreach ($order->orderStatus as $status_check)
-                                                                                            <option value="">Choose Status
-                                                                                            </option>
-                                                                                            <option
-                                                                                                value="{{ $status_id->id }}"
-                                                                                                {{ $status_check->status_type == $status_id->status_type ? 'Selected' : '' }}>
-                                                                                                {{ $status_id->status_type }}
-                                                                                            </option>
-                                                                                        @endforeach
-                                                                                    @endforeach
-                                                                                </select>
-                                                                            </div>
-                                                                            <div class="form-group col-md-12">
-                                                                                <label>Date</label>
-                                                                                <input type="date" class="form-control"
-                                                                                    placeholder="date">
-                                                                            </div>
+                                                </td>
+                                            </tr>
+                                            <div class="modal fade" id="Add_status{{ $order->id }}">
+                                                <div class="modal-dialog modal-dialog-centered" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title">Add Status</h5>
+                                                            <button type="button" class="close"
+                                                                data-dismiss="modal"><span>&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <form
+                                                                action="{{ Route('admin.updateOrderStatus', ['order_id' => $order->id]) }}"
+                                                                method="POST" enctype="multipart/form-data">
+                                                                @csrf
+                                                                <div class="form-row">
+                                                                    <div class="form-group col-md-12">
+                                                                        <label>Order Status</label>
 
-                                                                            <!-- <div class="form-group col-md-12">-->
-                                                                            <!--    <label>Booking Size</label>-->
-                                                                            <!--    <select name="" id="" class="form-control">-->
-                                                                            <!--            <option value="" selected>Choose Status</option>-->
-                                                                            <!--            <option value="1">1x40’ Container Truck</option>-->
-                                                                            <!--            <option value="1">1x20’ Container Truck</option>-->
-                                                                            <!--    </select>-->
-                                                                            <!--</div>-->
-                                                                            <!-- <div class="form-group col-md-12">-->
-                                                                            <!--    <label>Quantity</label>-->
-                                                                            <!--    <input type="number" value="0" class="form-control">-->
-                                                                            <!--</div>-->
+                                                                        @php
+                                                                            $order_type = App\Models\OrderStatus::where('main_type_id', $order->order_type_id)->get();
+                                                                        @endphp
 
-                                                                            @foreach ($order->containers as $con)
-                                                                                @php
-                                                                                    $bookingSize = App\Models\BookingSize::find($con->booking_size_id);
-                                                                                @endphp
-                                                                                <div class="col-lg-12">
-                                                                                    <label>Booking Size</label>
-                                                                                    <div class="form-group mb-2 col-md-12 px-0">
-                                                                                        <input type="text"
-                                                                                            class="form-control" disabled
-                                                                                            value="{{ $bookingSize->booking_size }}">
-                                                                                    </div>
-                                                                                    <div class="form-row mx-0">
-                                                                                        <div
-                                                                                            class="form-group mb-2 col-md-12 px-0">
-                                                                                            <label>Each Check Count one</label>
-                                                                                        </div>
-                                                                                        @php
-                                                                                            $check = App\Models\Check::where('container_id', $con->id)->get();
-                                                                                        @endphp
-                                                                                        @foreach ($check as $input)
-                                                                                            <div class="form-group col-md-1">
-                                                                                                <input type="checkbox"
-                                                                                                    name="count[]"
-                                                                                                    {{ $input->status == 1 ? 'checked disabled' : '' }}
-                                                                                                    value="{{ $input->id }}">
-                                                                                            </div>
-                                                                                        @endforeach
-                                                                                    </div>
-                                                                                </div>
+                                                                        <select id="order_status{{ $order->id }}"
+                                                                            name="status_type"
+                                                                            class="form-control change_status{{ $order->id }}"
+                                                                            order-id="{{ $order->id }}" required>
+                                                                            @foreach ($order->orderStatus as $order_check)
+                                                                                @foreach ($order_type as $type)
+                                                                                    <option value="{{ $type->id }}"
+                                                                                        data-status="{{ $type->status }}"
+                                                                                        status-name="{{ $type->status }}">
+                                                                                        {{ $type->status_type }}
+                                                                                    </option>
+                                                                                @endforeach
                                                                             @endforeach
+                                                                        </select>
+                                                                        <script>
+                                                                            $('.change_status{{ $order->id }}').change(function() {
 
+                                                                                var selectedOption = $('option:selected', this);
+                                                                                var statusName = selectedOption.attr('status-name');
+                                                                                $('.change_status_value{{ $order->id }}').val(statusName);
+                                                                            })
+                                                                        </script>
 
-                                                                            <div class="form-group col-md-12">
-                                                                                <label>File upload</label>
-                                                                                <input type="file" class="form-control"
-                                                                                    style="border:none">
+                                                                        <input type="hidden" value=""
+                                                                            class="change_status_value{{ $order->id }}"
+                                                                            name="check_status">
+                                                                    </div>
+
+                                                                    <div class="form-group col-md-12">
+                                                                        <label>Date</label>
+                                                                        <input type="date" class="form-control"
+                                                                            placeholder="date" name="pickup_date" required>
+                                                                    </div>
+
+                                                                    <div id="append_data{{ $order->id }}"
+                                                                        class="append_data{{ $order->id }} w-100">
+                                                                        @php
+                                                                            $container = DB::table('checks')
+                                                                                ->select('booking_size', DB::raw('COUNT(*) as `check`'))
+                                                                                ->where('order_id', "$order->id")
+                                                                                ->groupBy('booking_size')
+                                                                                ->get();
+                                                                        @endphp
+                                                                        {{-- @dd($container) --}}
+                                                                        @foreach ($container as $container_data)
+                                                                            <div class="col-lg-12">
+                                                                                <label>Booking Size</label>
+                                                                                <div class="form-group mb-2 col-md-12 px-0">
+                                                                                    <input type="text" class="form-control"
+                                                                                        disabled
+                                                                                        value="{{ $container_data->booking_size }}">
+                                                                                </div>
+                                                                                <div class="form-row mx-0">
+                                                                                    <div class="form-group mb-2 col-md-12 px-0">
+                                                                                        <label>Each Check Count one</label>
+                                                                                    </div>
+                                                                                    @php
+                                                                                        $check = App\Models\Check::where('booking_size', $container_data->booking_size)
+                                                                                            ->where('order_id', "$order->id")
+                                                                                            ->where('status_id', $order->orderStatus[0]->id)
+                                                                                            ->get();
+                                                                                    @endphp
+                                                                                    @foreach ($check as $input)
+                                                                                        <div class="form-group col-md-1">
+                                                                                            <input type="checkbox"
+                                                                                                class="check_container{{ $order->id }}"
+                                                                                                name="count[]"
+                                                                                                {{ $input->status == 1 ? 'checked disabled' : '' }}
+                                                                                                value="{{ $input->id }}">
+                                                                                        </div>
+                                                                                    @endforeach
+                                                                                </div>
                                                                             </div>
+                                                                        @endforeach
+                                                                    </div>
 
-                                                                            <div class="form-group col-md-12">
-                                                                                <label>Cargo Remark</label>
-                                                                                <textarea class="form-control" rows="3"></textarea>
-                                                                            </div>
-                                                                        </div>
-                                                                    </form>
+                                                                    <div class="form-group col-md-12">
+                                                                        <label>File upload</label>
+                                                                        <input type="file" class="form-control"
+                                                                            name="file" required>
+                                                                    </div>
+
+                                                                    <div class="form-group col-md-12">
+                                                                        <label>Cargo Remark</label>
+                                                                        <textarea class="form-control" name="cargo_remark" rows="3" required></textarea>
+                                                                    </div>
                                                                 </div>
-                                                                <div class="modal-footer">
-                                                                    <button type="button" class="btn btn-dark"
+
+                                                                <div class="w-100 d-flex justify-content-end">
+                                                                    <button type="button" class="btn btn-dark mx-2"
                                                                         data-dismiss="modal">CLOSE</button>
                                                                     <button type="submit"
                                                                         class="btn btn-dark">UPDATE</button>
                                                                 </div>
-                                                            </div>
+                                                            </form>
                                                         </div>
                                                     </div>
-                                                </td>
-                                            </tr>
+                                                </div>
+                                            </div>
                                         @endforeach
                                     @endisset
                                 </tbody>
@@ -243,9 +260,39 @@
             </div>
         </div>
 
+
         <!-- #/ container -->
     </div>
-    <!--**********************************
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    Content body end
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ***********************************-->
+    <!--**********************************Content body end***********************************-->
+    <script>
+        $('.change_status').change(function() {
+
+            // var selectedOption = $('option:selected', this);
+            // var statusName = selectedOption.attr('status-name');
+            // $('.change_status_value').val(statusName);
+
+            // This script working for ajax
+            var status_id = $(this).val();
+            var order_id = $(this).attr('order-id');
+
+            $.ajax({
+
+                url: "{{ Route('admin.orderTrackingAjax') }}",
+                type: 'GET',
+                data: {
+                    order_id: order_id,
+                    status_id: status_id
+                },
+                success: function(response) {
+                    console.log(response);
+                    $(`#append_data${order_id}`).empty().append(response);
+                    // alert(response)
+                },
+                error: function(error) {
+                    console.log('Error:', error);
+                }
+            });
+        });
+    </script>
+
 @endsection

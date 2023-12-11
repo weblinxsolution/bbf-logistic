@@ -1,8 +1,8 @@
 @extends('admin.layout.main')
 @section('admin')
     <!--**********************************
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        Content body start
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ***********************************-->
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            Content body start
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ***********************************-->
     <div class="content-body">
 
         <div class="row page-titles mx-0 mt-3">
@@ -63,7 +63,7 @@
                                         </div>
                                         <div class="form-group col-md-6">
                                             <label>Order type</label>
-                                            <select class="form-control" name="order_type" required>
+                                            <select class="form-control" name="order_type" required id="order_type">
                                                 <option value="" selected>Choose Type</option>
                                                 @isset($ordertType)
                                                     @foreach ($ordertType as $type)
@@ -74,14 +74,9 @@
                                         </div>
                                         <div class="form-group col-md-6">
                                             <label>Status Name</label>
-                                            <select class="form-control" name="status_name" required>
+                                            <select class="form-control" name="status_name" id="status_" required>
                                                 <option value="" selected>Choose Type</option>
-                                                @isset($orderStatus)
-                                                    @foreach ($orderStatus as $status)
-                                                        <option value="{{ $status->id }}">{{ $status->status_type }}
-                                                        </option>
-                                                    @endforeach
-                                                @endisset
+
                                             </select>
                                         </div>
                                         <div class="w-100 d-flex justify-content-end">
@@ -106,18 +101,20 @@
                                                 <input type="number" value="1" class="form-control"
                                                     placeholder="Admin remark" name="quantity[]" required>
                                             </div>
+                                        </div>
+                                        <div class="row w-100 mx-0" id="append_here"></div>
+                                        <div class="row mx-0 w-100">
                                             <div class="form-group col-md-6">
                                                 <label>Admin remark </label>
                                                 <input type="text" class="form-control" placeholder="Admin remark"
-                                                    name="admin_remark[]" required>
+                                                    name="admin_remark" required>
                                             </div>
                                             <div class="form-group col-md-6">
                                                 <label>Customer remark</label>
                                                 <input type="text" class="form-control" placeholder="Customer remark"
-                                                    name="customer_remark[]" required>
+                                                    name="customer_remark" required>
                                             </div>
                                         </div>
-                                        <div class="row w-100 mx-0" id="append_here"></div>
                                     </div>
                                     <hr class="mt-0">
                                     <button type="submit" class="btn btn-dark d-block ml-auto">Add Order</button>
@@ -155,16 +152,6 @@
                                                 <input type="number" value="1" class="form-control"
                                                     placeholder="Admin remark" name="quantity[]" required>
                                             </div>
-                                            <div class="form-group col-md-6">
-                                                <label>Admin remark </label>
-                                                <input type="text" class="form-control" placeholder="Admin remark"
-                                                    name="admin_remark[]" required>
-                                            </div>
-                                            <div class="form-group col-md-6">
-                                                <label>Customer remark</label>
-                                                <input type="text" class="form-control" placeholder="Customer remark"
-                                                    name="customer_remark[]" required>
-                                            </div>
                                         </div>
                 `;
             $('#append_here').append(html);
@@ -173,5 +160,25 @@
         function remove(box) {
             box.parentNode.parentNode.remove();
         }
+
+        $('#order_type').change(function() {
+            var id = $(this).val();
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                url: "{{ Route('admin.setOrderStatus') }}",
+                type: 'POST',
+                data: {
+                    id: id
+                },
+                success: function(response) {
+                    $('#status_').html(response);
+                },
+                error: function(error) {
+                    console.log('Error:', error);
+                }
+            });
+        });
     </script>
 @endsection

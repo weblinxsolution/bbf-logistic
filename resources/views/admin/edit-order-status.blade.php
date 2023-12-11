@@ -69,8 +69,8 @@
                                         </div>
                                         <div class="form-group col-md-12 d-flex" style="gap: 10px;">
                                             <div class="form-group mb-0">
-                                                <input type="radio" id="first-status" value="first-status"
-                                                    {{ $orderStatus->status == 'first-status' ? 'checked' : '' }}
+                                                <input type="radio" id="first-status" value="first status"
+                                                    {{ $orderStatus->status == 'first status' ? 'checked' : '' }}
                                                     name="status">
                                                 <label for="first-status">First Status</label>
                                             </div>
@@ -81,8 +81,8 @@
                                                 <label for="storage">Storage</label>
                                             </div>
                                             <div class="form-group mb-0">
-                                                <input type="radio" id="final-status" value="final-status"
-                                                    {{ $orderStatus->status == 'final-status' ? 'checked' : '' }}
+                                                <input type="radio" id="final-status" value="final status"
+                                                    {{ $orderStatus->status == 'final status' ? 'checked' : '' }}
                                                     name="status">
                                                 <label for="final-status">Final Status</label>
                                             </div>

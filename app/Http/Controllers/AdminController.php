@@ -10,10 +10,14 @@ use App\Models\Containers;
 use App\Models\OrderHistory;
 use App\Models\orders;
 use App\Models\OrderStatus;
+use App\Models\OrderTracking;
 use App\Models\ShippingType;
+use App\Models\TrackContainer;
 use App\Models\User;
+use Carbon\Carbon;
 use Faker\Container\Container;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
@@ -34,7 +38,8 @@ class AdminController extends Controller
     public function dashboard()
     {
         $title = "Dashboard";
-        $data = compact('title');
+        $orders = Orders::where('status', 1)->get();
+        $data = compact('title', 'orders');
         return view('admin.index')->with($data);
     }
 
@@ -64,7 +69,7 @@ class AdminController extends Controller
 
         $check = User::where('email', $request->email)->first();
         if ($check) {
-            return redirect()->back()->with('error', 'User Already Register');
+            return redirect()->back()->with('error', 'Email Already Register');
         } else {
             $user = new User;
             $user->name = $request->name;
@@ -72,7 +77,7 @@ class AdminController extends Controller
             $user->number = $request->number;
             $user->password = Hash::make($request->password);
             $user->save();
-            return redirect()->back()->with('success', 'User Successfully Register');
+            return redirect()->route('admin.userManagement')->with('success', 'User Successfully Register');
         }
     }
 
@@ -99,7 +104,6 @@ class AdminController extends Controller
                 "email" => $request->email,
                 "password" => Hash::make($request->password)
             ]);
-
         } else {
             User::where('id', $id)->update([
                 "name" => $request->name,
@@ -123,9 +127,8 @@ class AdminController extends Controller
     public function order_management()
     {
         $title = "Order Management";
-        $orders = Orders::with('users', 'ordersType', 'orderStatus', 'containers')->get();
-        $orderStatus = OrderStatus::all();
-        $data = compact('title', 'orderStatus', 'orders');
+        $orders = Orders::where('status', 0)->with('users', 'ordersType', 'orderStatus', 'checks')->get();
+        $data = compact('title', 'orders');
         return view('admin.order-management')->with($data);
     }
 
@@ -134,11 +137,21 @@ class AdminController extends Controller
         $title = "Add Order";
         $users = User::all();
         $ordertType = ShippingType::all();
-        $orderStatus = OrderStatus::all();
         $bookingSize = BookingSize::all();
-
-        $data = compact('title', 'users', 'ordertType', 'orderStatus', 'bookingSize');
+        $data = compact('title', 'users', 'ordertType', 'bookingSize');
         return view('admin.add-order')->with($data);
+    }
+
+    public function set_orderStatus(Request $request)
+    {
+        $status = OrderStatus::where('main_type_id', $request->id)->get();
+        $option = '<option value="" selected>Choose Type</option>';
+        if ($status) {
+            foreach ($status as $value) {
+                $option .= '<option value="' . $value->id . '">' . $value->status_type . '</option>';
+            }
+        }
+        return $option;
     }
 
     public function add_order_db(Request $request)
@@ -158,36 +171,197 @@ class AdminController extends Controller
             "customer_remark" => "required",
         ]);
 
+        // dd($request->all());
+
+        $createdDate = Carbon::parse($request->create_date);
+        $pickUpDate = Carbon::parse($request->pickup_date);
+
         $order = new Orders;
-        $order->created_date = $request->create_date;
-        $order->pickup_date = $request->pickup_date;
+        $order->pickup_date = $pickUpDate;
+        $order->created_order_date = $createdDate;
         $order->invoice_no = $request->invoice_no;
         $order->shipper_name = $request->shipper_name;
         $order->consignee_name = $request->consignee_name;
         $order->user_email_id = $request->user_email;
         $order->order_type_id = $request->order_type;
         $order->status_type_id = $request->status_name;
+        $order->admin_remark = $request->admin_remark;
+        $order->customer_remark = $request->customer_remark;
         $order->save();
 
-        foreach ($request['booking_size'] as $key => $size) {
-            $container = new Containers;
-            $container->order_id = $order->id;
-            $container->booking_size_id = $size;
-            $container->quantity = $request['quantity'][$key];
-            $container->admin_remark = $request['admin_remark'][$key];
-            $container->customer_remark = $request['customer_remark'][$key];
-            $container->save();
+        $countStatus = OrderStatus::where("main_type_id", $request->order_type)->get();
 
-            for ($i = 1; $i <= $request['quantity'][$key]; $i++) {
-                $check = new Check;
-                $check->container_id = $container->id;
-                $check->check = $i;
-                $check->status = 0;
-                $check->save();
+        for ($J = 0; $J < count($countStatus); $J++) {
+
+            foreach ($request['booking_size'] as $key => $size) {
+
+                for ($i = 1; $i <= $request['quantity'][$key]; $i++) {
+                    $check = new Check;
+                    $check->order_id = $order->id;
+                    $check->booking_size = $size;
+                    $check->created_order_date = $createdDate;
+                    $check->check = $i;
+                    $check->status_id = $countStatus[$J]["id"];
+                    $check->status = 0;
+                    $check->save();
+                }
             }
+
         }
+
+        $tracking = new OrderTracking;
+        $tracking->order_id = $order->id;
+        $tracking->order_status_id = $request->status_name;
+        $tracking->cargo_remark = $request->cargo_remark;
+        $tracking->created_order_date = $request->pickup_date;
+        $tracking->save();
+
         // dd($container);
         return redirect()->route('admin.orderManagement')->with('success', 'Order Successfully Added');
+    }
+
+    public function update_order_status(Request $request)
+    {
+        $order_id = $request->order_id;
+        $order_status_id = $request->status_type;
+
+        $pickUpDate = Carbon::parse($request->pickup_date);
+        // dd($pickUpDate);
+
+        if (str_replace(' ', '-', $request['check_status']) == 'final-status' || $request['check_status'] == 'final status') {
+            Orders::where('id', $order_id)->update([
+                "status_type_id" => $order_status_id,
+                "pickup_date" => $pickUpDate,
+                "final_order_date" => $pickUpDate,
+                "status" => 1
+            ]);
+        } else {
+            Orders::where('id', $order_id)->update([
+                "status_type_id" => $order_status_id,
+                "pickup_date" => $pickUpDate,
+            ]);
+        }
+        $quantity = 0;
+        if ($request['count']) {
+            foreach ($request['count'] as $id) {
+                $quantity++;
+                Check::where('id', $id)->update([
+                    "created_order_date" => $pickUpDate,
+                    "status_id" => $order_status_id,
+                    "status" => 1
+                ]);
+            }
+        }
+
+
+        $fileName = null;
+        if ($request->hasFile('file')) {
+            $fileName = time() . '.' . $request->file->extension();
+            $request->file->move(public_path('documents'), $fileName);
+        }
+
+        $tracking = new OrderTracking;
+        $tracking->order_id = $order_id;
+        $tracking->order_status_id = $order_status_id;
+        $tracking->cargo_remark = $request->cargo_remark;
+        $tracking->document = $fileName;
+        $tracking->created_order_date = $pickUpDate;
+        $tracking->save();
+
+        return redirect()->route('admin.orderManagement')->with('success', 'Order Successfully Updated');
+
+    }
+
+    public function order_tracking_invoice_ajax(Request $request)
+    {
+        $order_id = $request["order_id"];
+        $status_id = $request["status_id"];
+
+        // $bookingSize = Check::where("order_id", $order_id)->where("status_id", $status_id)->with("sizeInfo")->get();
+
+        // $testing = Check::where("order_id", $order_id)->distinct(['status_id'])->get();
+
+        // return $testing;
+
+        // $div = "";
+
+        // foreach ($bookingSize->unique("booking_size") as $size) {
+        //     $div .= '
+        //         <div class="col-lg-12">
+        //             <label>Booking Size</label>
+        //             <div class="form-group mb-2 col-md-12 px-0">
+        //                 <input type="text"
+        //                     class="form-control" disabled
+        //                     value="' . $size->sizeInfo->booking_size . '">
+        //             </div>
+        //             <div class="form-row mx-0">
+        //                 <div class="form-group mb-2 col-md-12 px-0">
+        //                     <label>Each Check Count one</label>';
+        //     foreach ($bookingSize->unique("status_id") as $checkBox) {
+        //         $div .= '
+        //             <div class="form-group col-md-1">
+        //                 <input type="checkbox"
+        //                     class="check_container"
+        //                     name="count[]"
+        //                     ' . ($size->status == 1 ? 'checked disabled' : '') . '
+        //                     value="' . $size->id . '">
+        //             </div>';
+        //     }
+
+        //     $div .= '
+        //                 </div>
+        //             </div>
+        //         </div>';
+        // }
+
+
+        // // echo $div;
+
+        // return $div;
+
+        // return $div;
+
+        $checkBoxes = DB::select("SELECT booking_size, COUNT(*) AS `check`
+        FROM checks
+        WHERE order_id = $order_id AND status_id = $status_id
+        GROUP BY booking_size");
+
+        $html = '';
+        foreach ($checkBoxes as $check) {
+            $size = BookingSize::find($check->booking_size);
+            $html .= '<div class="col-lg-12">
+                        <label>Booking Size</label>
+                        <div class="form-group mb-2 col-md-12 px-0">
+                            <input type="text"
+                                class="form-control" disabled
+                                value="' . $size->booking_size . '">
+                        </div>
+                        <div class="form-row mx-0">
+                            <div class="form-group mb-2 col-md-12 px-0">
+                                <label>Each Check Count one</label>
+                            </div>';
+
+            $count_check = DB::select("SELECT *
+                        FROM checks
+                        WHERE order_id = $order_id AND status_id = $status_id AND  `booking_size` =$check->booking_size
+                    ");
+
+            foreach ($count_check as $count_check_dt) {
+                $html .= '<div class="form-group col-md-1">
+                                        <input type="checkbox"
+                                            class="check_container"
+                                            id="check_values"
+                                            name="count[]"
+                                            ' . ($count_check_dt->status == 1 ? 'checked' : '') . '
+                                            value="' . $count_check_dt->id . '">
+                                    </div>';
+            }
+
+            $html .= '
+                                    </div>
+                                </div>';
+        }
+        return $html;
     }
 
     public function edit_order()
@@ -418,27 +592,33 @@ class AdminController extends Controller
     {
         $title = "Order History";
         $orders = Orders::where('status', 1)->get();
-
-        if ($orders->count()) {
-            foreach ($orders as $order) {
-                $newOrder = new OrderHistory;
-                $newOrder->order_id = $order->id;
-                $newOrder->created_date = $order->created_date;
-                $newOrder->pickup_date = $order->pickup_date;
-                $newOrder->invoice_no = $order->invoice_no;
-                $newOrder->shipper_name = $order->shipper_name;
-                $newOrder->consignee_name = $order->consignee_name;
-                $newOrder->added_by = $order->added_by;
-                $newOrder->user_email_id = $order->user_email_id;
-                $newOrder->order_type_id = $order->order_type_id;
-                $newOrder->status_type_id = $order->status_type_id;
-                $newOrder->status = $order->status;
-                $newOrder->save();
-            }
-        }
         $data = compact('title', 'orders');
         return view('admin.order-history')->with($data);
     }
+
+    public function order_tracking_invoice(Request $request)
+    {
+        $title = "Order Tracking";
+        if ($request->invoice) {
+            $invoice = $request->invoice;
+            $orders = Orders::where('invoice_no', $request->invoice)->with('users', 'ordersType', 'orderStatus')->first();
+            $tracking = OrderTracking::where('order_id', $orders->id)->get();
+            $data = compact('title', 'orders', 'tracking', 'invoice');
+        } else {
+            $data = compact('title');
+        }
+        return view('admin.order-tracking')->with($data);
+    }
+
+    // public function order_tracking_invoice_db(Request $request)
+    // {
+    //     $title = "Order Tracking";
+    //     $orders = Orders::where('invoice_no', $request->invoice)->with('users', 'ordersType', 'orderStatus', 'containers')->first();
+    //     $tracking = OrderTracking::where('order_id', $orders->id)->get();
+    //     $data = compact('title', 'orders', 'tracking');
+    //     // dd($data);
+    //     return redirect()->back()->with($data);
+    // }
 
     public function login()
     {

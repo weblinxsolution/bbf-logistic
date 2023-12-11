@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -46,6 +47,13 @@ Route::middleware(['AdminAuth'])->prefix('admin')->group(function () {
     // This Route Working For Add Orders
     Route::get('/add-order', [AdminController::class, 'add_order'])->name('admin.addOrder');
     Route::post('/add-order-db', [AdminController::class, 'add_order_db'])->name('admin.addOrderDb');
+
+    // This Route Working For Set Order Status For Add Orders
+    Route::post('/set-order-status', [AdminController::class, 'set_orderStatus'])->name('admin.setOrderStatus');
+
+    // This Route Working For Add Orders
+    Route::post('/update-order-status/{order_id}', [AdminController::class, 'update_order_status'])->name('admin.updateOrderStatus');
+
 
     // This Route Working For Add Orders
     Route::get('/edit-order/{id}', [AdminController::class, 'edit_order'])->name('admin.editOrder');
@@ -110,9 +118,32 @@ Route::middleware(['AdminAuth'])->prefix('admin')->group(function () {
     // This Route Working For Delete Booking Size
     Route::get('/delete-booking-size-db/{id}', [AdminController::class, 'delete_booking_size_db'])->name('admin.deleteBookingSizeDb');
 
-
+    // This Route Working For Order History
     Route::get('/order-history', [AdminController::class, 'order_history'])->name('admin.orderHistory');
+
+    // This Route Working For Order Tracking
+    // This Route Working For Order Tracking With Invoice
+    Route::get('/order-tracking/{invoice?}', [AdminController::class, 'order_tracking_invoice'])->name('admin.orderTracking');
+    Route::get('/order-tracking-db', [AdminController::class, 'order_tracking_invoice_db'])->name('admin.orderTrackingDb');
+    Route::get('/order-tracking-ajax', [AdminController::class, 'order_tracking_invoice_ajax'])->name('admin.orderTrackingAjax');
+
+    // This Route Working For Order Tracking View
+    // Route::get('/order-tracking', [AdminController::class, 'order_tracking'])->name('admin.orderTracking');
 });
+
+
+Route::get('/user/login', [UserController::class, 'login'])->name('user.login');
+Route::post('/user/login-check', [UserController::class, 'login_check'])->name('user.loginCheck');
+Route::get('/user/logout', [UserController::class, 'logout'])->name('user.logout');
+
+Route::middleware(['UserAuth'])->prefix('user')->group(function () {
+    Route::get('/dashboard', [UserController::class, 'dashboard'])->name('user.dashboard');
+    Route::get('/order-tracking', [UserController::class, 'order_tracking'])->name('user.orderTracking');
+    Route::post('/order-tracking-result', [UserController::class, 'order_tracking_invoice_db'])->name('user.orderTrackingDb');
+
+});
+
+
 
 Route::get('/', function () {
 

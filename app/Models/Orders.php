@@ -27,5 +27,10 @@ class Orders extends Model
         return $this->hasMany(Containers::class, 'order_id', 'id');
     }
 
+    public function checks()
+    {
+        return $this->hasMany(Check::class, "order_id", "id");
+    }
+
 
 }

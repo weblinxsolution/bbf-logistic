@@ -1,8 +1,8 @@
 @extends('admin.layout.main')
 @section('admin')
     <!--**********************************
-                                                                                                                                                                                                                                                                                                    Content body start
-                                                                                                                                                                                                                                                                                                ***********************************-->
+                                                                                                                                                                                                                                                                                                                                                                                                                                                    Content body start
+                                                                                                                                                                                                                                                                                                                                                                                                                                                ***********************************-->
     <div class="content-body">
 
         <div class="container-fluid mt-3">
@@ -12,8 +12,7 @@
                         <div class="card-body">
                             <h3 class="card-title text-white">Order Delivered</h3>
                             <div class="d-inline-block">
-                                <h2 class="text-white">65</h2>
-                                <p class="text-white mb-0">Jan - March 2023</p>
+                                <h2 class="text-white">{{ $complete_order->count() }}</h2>
                             </div>
                             <span class="float-right display-5 opacity-5"><i class="fa fa-shopping-bag"></i></span>
                         </div>
@@ -25,7 +24,7 @@
                             <h3 class="card-title text-white">In Transit</h3>
                             <div class="d-inline-block">
                                 <h2 class="text-white">41</h2>
-                                <p class="text-white mb-0">Jan - March 2023</p>
+                                {{-- <p class="text-white mb-0">Jan - March 2023</p> --}}
                             </div>
                             <span class="float-right display-5 opacity-5"><i class="fa fa-shopping-bag"></i></span>
                         </div>
@@ -36,8 +35,7 @@
                         <div class="card-body">
                             <h3 class="card-title text-white">Total Order</h3>
                             <div class="d-inline-block">
-                                <h2 class="text-white">51</h2>
-                                <p class="text-white mb-0">Jan - March 2023</p>
+                                <h2 class="text-white">{{ $total_order->count() }}</h2>
                             </div>
                             <span class="float-right display-5 opacity-5"><i class="fa fa-shopping-bag"></i></span>
                         </div>
@@ -48,8 +46,7 @@
                         <div class="card-body">
                             <h3 class="card-title text-white">Booking Size</h3>
                             <div class="d-inline-block">
-                                <h2 class="text-white">25</h2>
-                                <p class="text-white mb-0">Jan - March 2019</p>
+                                <h2 class="text-white">{{ $total_booking_size->count() }}</h2>
                             </div>
                             <span class="float-right display-5 opacity-5"><i class="fa fa-shopping-bag"></i></span>
                         </div>
@@ -102,8 +99,8 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @isset($orders)
-                                            @foreach ($orders as $order)
+                                        @isset($complete_order)
+                                            @foreach ($complete_order as $order)
                                                 <tr>
                                                     <td>{{ $loop->iteration }}</td>
                                                     <td>{{ \Carbon\Carbon::parse($order->pickup_date)->format('d-m-y') }}</td>

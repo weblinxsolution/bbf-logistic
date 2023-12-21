@@ -79,6 +79,8 @@
 <script src="{{ asset('admin/plugins/tables/js/datatable-init/datatable-basic.min.js') }}"></script>
 <script src="{{ asset('admin/js/dashboard/dashboard-1.js') }}"></script>
 
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
 </body>
 
 </html>

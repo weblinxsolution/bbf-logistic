@@ -79,8 +79,7 @@
                                                 </td>
                                                 <td>
                                                     <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
-                                                        data-target="#Add_status{{ $order->id }}"
-                                                        onclick="add_status(this.$order->id)">Add Status</button>
+                                                        data-target="#Add_status{{ $order->id }}">Add Status</button>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex algin-items-center">
@@ -139,9 +138,8 @@
                                                             </button>
                                                         </div>
                                                         <div class="modal-body">
-                                                            <form
-                                                                action="{{ Route('admin.updateOrderStatus', ['order_id' => $order->id]) }}"
-                                                                method="POST" enctype="multipart/form-data">
+                                                            <form method="POST" enctype="multipart/form-data"
+                                                                id="update_status{{ $order->id }}">
                                                                 @csrf
                                                                 <div class="form-row">
                                                                     <div class="form-group col-md-12">
@@ -153,7 +151,7 @@
 
                                                                         <select id="order_status{{ $order->id }}"
                                                                             name="status_type"
-                                                                            class="form-control change_status{{ $order->id }}"
+                                                                            class="form-control select_status change_status{{ $order->id }}"
                                                                             order-id="{{ $order->id }}" required>
                                                                             @foreach ($order->orderStatus as $order_check)
                                                                                 @foreach ($order_type as $type)
@@ -175,13 +173,14 @@
                                                                         </script>
 
                                                                         <input type="hidden" value=""
-                                                                            class="change_status_value{{ $order->id }}"
+                                                                            class="change_status_value{{ $order->id }} check_status{{ $order->id }}"
                                                                             name="check_status">
                                                                     </div>
 
                                                                     <div class="form-group col-md-12">
                                                                         <label>Date</label>
-                                                                        <input type="date" class="form-control"
+                                                                        <input type="date"
+                                                                            class="form-control pickup_date{{ $order->id }}"
                                                                             placeholder="date" name="pickup_date" required>
                                                                     </div>
 
@@ -199,9 +198,12 @@
                                                                             <div class="col-lg-12">
                                                                                 <label>Booking Size</label>
                                                                                 <div class="form-group mb-2 col-md-12 px-0">
+                                                                                    @php
+                                                                                        $size = App\Models\BookingSize::find($container_data->booking_size);
+                                                                                    @endphp
                                                                                     <input type="text" class="form-control"
                                                                                         disabled
-                                                                                        value="{{ $container_data->booking_size }}">
+                                                                                        value="{{ $size->booking_size }}">
                                                                                 </div>
                                                                                 <div class="form-row mx-0">
                                                                                     <div class="form-group mb-2 col-md-12 px-0">
@@ -229,13 +231,14 @@
 
                                                                     <div class="form-group col-md-12">
                                                                         <label>File upload</label>
-                                                                        <input type="file" class="form-control"
+                                                                        <input type="file"
+                                                                            class="form-control file_{{ $order->id }}"
                                                                             name="file" required>
                                                                     </div>
 
                                                                     <div class="form-group col-md-12">
                                                                         <label>Cargo Remark</label>
-                                                                        <textarea class="form-control" name="cargo_remark" rows="3" required></textarea>
+                                                                        <textarea class="form-control cargo_remark{{ $order->id }}" name="cargo_remark" rows="3" required></textarea>
                                                                     </div>
                                                                 </div>
 
@@ -244,6 +247,78 @@
                                                                         data-dismiss="modal">CLOSE</button>
                                                                     <button type="submit"
                                                                         class="btn btn-dark">UPDATE</button>
+
+                                                                    <script>
+                                                                        $(document).ready(function() {
+                                                                            $('#update_status{{ $order->id }}').submit(function(e) {
+                                                                                e.preventDefault();
+
+                                                                                var check_status = $('.check_status{{ $order->id }}').val();
+                                                                                var status_id = $('.change_status{{ $order->id }}').val();
+                                                                                var pickup_date = $('.pickup_date{{ $order->id }}').val();
+                                                                                var image = $('.file_{{ $order->id }}')[0].files[0];
+                                                                                var cargo_remark = $('.cargo_remark{{ $order->id }}').val();
+                                                                                var checkedValues = $('.check_container{{ $order->id }}:checked').map(function() {
+                                                                                    return this.value;
+                                                                                }).get();
+
+                                                                                var formData = new FormData();
+                                                                                formData.append('_token', '{{ csrf_token() }}');
+                                                                                formData.append('check_status', check_status);
+                                                                                formData.append('status_type', status_id);
+                                                                                formData.append('pickup_date', pickup_date);
+                                                                                formData.append('file', image);
+                                                                                formData.append('cargo_remark', cargo_remark);
+
+                                                                                $.each(checkedValues, function(index, value) {
+                                                                                    formData.append('count[]', value);
+                                                                                });
+
+                                                                                $.ajax({
+                                                                                    url: "{{ route('admin.updateOrderStatus', ['order_id' => $order->id]) }}", // corrected the syntax for route function
+                                                                                    type: 'POST',
+                                                                                    processData: false,
+                                                                                    contentType: false,
+                                                                                    data: formData,
+                                                                                    success: function(response) {
+                                                                                        console.log(response);
+                                                                                        if (response.success) {
+                                                                                            Toastify({
+                                                                                                text: response.message,
+                                                                                                duration: 3000,
+                                                                                                close: true,
+                                                                                                gravity: "top", // `top` or `bottom`
+                                                                                                position: "right", // `left`, `center` or `right`
+                                                                                                stopOnFocus: true, // Prevents dismissing of toast on hover
+                                                                                                style: {
+                                                                                                    background: "green",
+                                                                                                },
+                                                                                            }).showToast();
+                                                                                            window.location.reload();
+                                                                                        } else {
+                                                                                            Toastify({
+                                                                                                text: 'Try Again Something went Wrong!',
+                                                                                                duration: 3000,
+                                                                                                close: true,
+                                                                                                gravity: "top", // `top` or `bottom`
+                                                                                                position: "right", // `left`, `center` or `right`
+                                                                                                stopOnFocus: true, // Prevents dismissing of toast on hover
+                                                                                                style: {
+                                                                                                    background: "green",
+                                                                                                },
+                                                                                            }).showToast();
+                                                                                        }
+                                                                                        // $(`#append_data${order_id}`).empty().append(response);
+                                                                                        // alert(response)
+                                                                                    },
+                                                                                    error: function(error) {
+                                                                                        console.log('Error:', error);
+                                                                                    }
+                                                                                });
+                                                                            });
+                                                                        });
+                                                                    </script>
+
                                                                 </div>
                                                             </form>
                                                         </div>
@@ -265,7 +340,7 @@
     </div>
     <!--**********************************Content body end***********************************-->
     <script>
-        $('.change_status').change(function() {
+        $('.select_status').change(function() {
 
             // var selectedOption = $('option:selected', this);
             // var statusName = selectedOption.attr('status-name');
@@ -284,8 +359,8 @@
                     status_id: status_id
                 },
                 success: function(response) {
-                    console.log(response);
-                    $(`#append_data${order_id}`).empty().append(response);
+                    // console.log(response);
+                    $(`#append_data${order_id}`).html(response);
                     // alert(response)
                 },
                 error: function(error) {

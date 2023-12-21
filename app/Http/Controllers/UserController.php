@@ -12,14 +12,20 @@ class UserController extends Controller
 {
     public function dashboard(Request $request)
     {
-        $tital = "Dashboard";
-        $data = compact('tital');
-        return view('user.index');
+        $title = "Dashboard";
+        $user_id = session('user_id');
+        $user = User::find($user_id);
+
+        $complete_order = Orders::where('status', 1)->where('user_email_id', $user->id)->get();
+        $total_order = Orders::where('user_email_id', $user_id)->get();
+
+        $data = compact('title', 'complete_order', 'total_order');
+        return view('user.index')->with($data);
     }
     public function order_tracking(Request $request)
     {
-        $tital = "Order Tracking";
-        $data = compact('tital');
+        $title = "Order Tracking";
+        $data = compact('title');
         return view('user.order-tracking');
     }
 
@@ -29,7 +35,7 @@ class UserController extends Controller
         $title = "Order Tracking Result";
         $user_id = session('user_id');
         $user = User::find($user_id);
-        $orders = Orders::where('invoice_no', $request->invoice)->where('user_email_id', $user->id)->with('users', 'ordersType', 'orderStatus', 'containers')->first();
+        $orders = Orders::where('invoice_no', $request->invoice)->where('user_email_id', $user->id)->with('users', 'ordersType', 'orderStatus')->first();
         if ($orders) {
             $tracking = OrderTracking::where('order_id', $orders->id)->get();
             if ($tracking) {

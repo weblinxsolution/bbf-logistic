@@ -17,6 +17,8 @@
     <link rel="stylesheet" href="{{ asset('admin/plugins/chartist/css/chartist.min.css') }}">
     <link rel="stylesheet" href="{{ asset('admin/plugins/chartist-plugin-tooltips/css/chartist-plugin-tooltip.css') }}">
 
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
     <link href="{{ asset('admin/plugins/fullcalendar/css/fullcalendar.min.css') }}" rel="stylesheet">
 
 

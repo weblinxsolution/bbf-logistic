@@ -38,8 +38,10 @@ class AdminController extends Controller
     public function dashboard()
     {
         $title = "Dashboard";
-        $orders = Orders::where('status', 1)->get();
-        $data = compact('title', 'orders');
+        $complete_order = Orders::where('status', 1)->get();
+        $total_order = Orders::all();
+        $total_booking_size = BookingSize::all();
+        $data = compact('title', 'complete_order', 'total_order', 'total_booking_size');
         return view('admin.index')->with($data);
     }
 
@@ -222,13 +224,14 @@ class AdminController extends Controller
 
     public function update_order_status(Request $request)
     {
+
         $order_id = $request->order_id;
         $order_status_id = $request->status_type;
 
         $pickUpDate = Carbon::parse($request->pickup_date);
         // dd($pickUpDate);
 
-        if (str_replace(' ', '-', $request['check_status']) == 'final-status' || $request['check_status'] == 'final status') {
+        if (str_replace(' ', '-', $request->check_status) == 'final-status' || $request->check_status == 'final status') {
             Orders::where('id', $order_id)->update([
                 "status_type_id" => $order_status_id,
                 "pickup_date" => $pickUpDate,
@@ -268,7 +271,8 @@ class AdminController extends Controller
         $tracking->created_order_date = $pickUpDate;
         $tracking->save();
 
-        return redirect()->route('admin.orderManagement')->with('success', 'Order Successfully Updated');
+        // return redirect()->route('admin.orderManagement')->with('success', 'Order Successfully Updated');
+        return response()->json(['success' => true, 'message' => 'Order Successfully Updated']);
 
     }
 
@@ -277,49 +281,6 @@ class AdminController extends Controller
         $order_id = $request["order_id"];
         $status_id = $request["status_id"];
 
-        // $bookingSize = Check::where("order_id", $order_id)->where("status_id", $status_id)->with("sizeInfo")->get();
-
-        // $testing = Check::where("order_id", $order_id)->distinct(['status_id'])->get();
-
-        // return $testing;
-
-        // $div = "";
-
-        // foreach ($bookingSize->unique("booking_size") as $size) {
-        //     $div .= '
-        //         <div class="col-lg-12">
-        //             <label>Booking Size</label>
-        //             <div class="form-group mb-2 col-md-12 px-0">
-        //                 <input type="text"
-        //                     class="form-control" disabled
-        //                     value="' . $size->sizeInfo->booking_size . '">
-        //             </div>
-        //             <div class="form-row mx-0">
-        //                 <div class="form-group mb-2 col-md-12 px-0">
-        //                     <label>Each Check Count one</label>';
-        //     foreach ($bookingSize->unique("status_id") as $checkBox) {
-        //         $div .= '
-        //             <div class="form-group col-md-1">
-        //                 <input type="checkbox"
-        //                     class="check_container"
-        //                     name="count[]"
-        //                     ' . ($size->status == 1 ? 'checked disabled' : '') . '
-        //                     value="' . $size->id . '">
-        //             </div>';
-        //     }
-
-        //     $div .= '
-        //                 </div>
-        //             </div>
-        //         </div>';
-        // }
-
-
-        // // echo $div;
-
-        // return $div;
-
-        // return $div;
 
         $checkBoxes = DB::select("SELECT booking_size, COUNT(*) AS `check`
         FROM checks
@@ -349,7 +310,7 @@ class AdminController extends Controller
             foreach ($count_check as $count_check_dt) {
                 $html .= '<div class="form-group col-md-1">
                                         <input type="checkbox"
-                                            class="check_container"
+                                            class="check_container' . $order_id . '"
                                             id="check_values"
                                             name="count[]"
                                             ' . ($count_check_dt->status == 1 ? 'checked' : '') . '

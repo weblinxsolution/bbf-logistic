@@ -14,7 +14,10 @@ return new class extends Migration {
             $table->id();
             $table->string('admin');
             $table->string('email')->unique();
+            $table->string('number');
             $table->string('password');
+            $table->string('role')->nullable();
+            $table->string('status')->nullable();
             $table->timestamps();
         });
     }

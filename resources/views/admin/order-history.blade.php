@@ -53,7 +53,9 @@
                                                 <td>{{ $order->shipper_name }}</td>
                                                 <td>{{ $order->consignee_name }}</td>
                                                 <td>
-                                                    {{ $order->cargo_remark }}
+                                                    @foreach ($order->tracking as $remark)
+                                                        <span class="badge badge-success text-white">{{ $remark->cargo_remark }}</span>
+                                                    @endforeach
                                                 </td>
                                                 <td>
                                                     {{ $order->updated_at->format('d-m-y ') }}

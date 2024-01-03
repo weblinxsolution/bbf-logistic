@@ -12,8 +12,9 @@ return new class extends Migration {
     {
         Schema::create('admin_activities', function (Blueprint $table) {
             $table->id();
-            $table->string('username');
-            $table->string('admin_activity');
+            $table->string('username')->nullable();
+            $table->string('admin_activity')->nullable();
+            $table->string('role')->nullable();
             $table->timestamps();
         });
     }

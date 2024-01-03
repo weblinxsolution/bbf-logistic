@@ -64,8 +64,7 @@
                                         </div>
                                         <div class="form-group col-md-12 d-flex" style="gap: 10px;">
                                             <div class="form-group mb-0">
-                                                <input type="radio" id="first-status" value="first status" name="status"
-                                                    checked>
+                                                <input type="radio" id="first-status" value="first status" name="status">
                                                 <label for="first-status">First Status</label>
                                             </div>
                                             <div class="form-group mb-0">

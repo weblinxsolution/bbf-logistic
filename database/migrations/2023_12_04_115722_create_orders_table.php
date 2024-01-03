@@ -12,6 +12,8 @@ return new class extends Migration {
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('admin_id');
+            $table->foreign('admin_id')->references('id')->on('admins')->onDelete('cascade');
             $table->string('created_order_date');
             $table->string('pickup_date');
             $table->string('invoice_no');
@@ -22,8 +24,9 @@ return new class extends Migration {
             $table->string('admin_remark');
             $table->string('customer_remark');
             $table->string('final_order_date')->nullable();
-            $table->unsignedBigInteger('order_type_id');
-            $table->unsignedBigInteger('status_type_id');
+            $table->string('storage_days')->nullable();
+            $table->unsignedBigInteger('order_type_id')->nullable();
+            $table->unsignedBigInteger('status_type_id')->nullable();
             $table->string('status')->nullable()->default(0);
             $table->foreign('order_type_id')->references('id')->on('shipping_types')->onDelete('cascade');
             $table->foreign('status_type_id')->references('id')->on('order_statuses')->onDelete('cascade');

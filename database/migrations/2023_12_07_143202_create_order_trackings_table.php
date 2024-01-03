@@ -15,8 +15,9 @@ return new class extends Migration {
             $table->unsignedBigInteger('order_id');
             $table->string('document')->nullable();
             $table->string('cargo_remark')->nullable();
-            $table->string('created_order_date');
-            $table->unsignedBigInteger('order_status_id');
+            $table->string('created_order_date')->nullable();
+            $table->string('pickup_order_date')->nullable();
+            $table->unsignedBigInteger('order_status_id')->nullable();
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
             $table->foreign('order_status_id')->references('id')->on('order_statuses')->onDelete('cascade');
             $table->timestamps();

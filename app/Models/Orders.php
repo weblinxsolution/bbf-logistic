@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Orders extends Model
 {
     use HasFactory;
+    function tracking()
+    {
+        return $this->hasMany(OrderTracking::class, 'order_id', 'id');
+    }
     function users()
     {
         return $this->hasMany(User::class, 'id', 'user_email_id');
@@ -30,6 +34,10 @@ class Orders extends Model
     public function checks()
     {
         return $this->hasMany(Check::class, "order_id", "id");
+    }
+    public function Admins()
+    {
+        return $this->hasMany(Admin::class, "id", "admin_id");
     }
 
 

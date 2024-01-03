@@ -19,7 +19,8 @@ return new class extends Migration {
 
             $table->string('created_order_date');
             // $table->unsignedBigInteger('booking_size_id');
-            $table->string('check');
+            $table->string('name')->nullable();
+            $table->string('check')->nullable();;
             $table->string('status')->nullable(0);
             $table->unsignedBigInteger('status_id');
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');

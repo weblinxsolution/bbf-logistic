@@ -19,6 +19,9 @@
         .calendar_ td {
             border: 1px solid #dddddd;
             text-align: center;
+        }
+
+        .calendar_ td div {
             padding: 10px;
         }
 
@@ -39,8 +42,8 @@
     </style>
 
     <!--**********************************
-                    Content body start
-                ***********************************-->
+                                                                                                                                                                                                                                    Content body start
+                                                                                                                                                                                                                                ***********************************-->
     <div class="content-body">
 
         <div class="row page-titles mx-0">
@@ -59,7 +62,18 @@
                     <table class="calendar_">
                         <thead>
                             <tr>
-                                <th colspan="7" style="font-size:30px;">November 2023</th>
+                                <th colspan="7">
+                                    <div
+                                        style="display: flex; align-items: center; gap: 20px; justify-content: center; font-size: 27px;">
+                                        <a href="#" onclick="changeMonth(-1)">
+                                            <i class="fa fa-angle-left fa-2x text-white "></i>
+                                        </a>
+                                        <span id="currentMonth">November 2024</span>
+                                        <a href="#" onclick="changeMonth(1)">
+                                            <i class="fa fa-angle-right fa-2x text-white "></i>
+                                        </a>
+                                    </div>
+                                </th>
                             </tr>
                             <tr>
                                 <th>Sun</th>
@@ -71,54 +85,13 @@
                                 <th>Sat</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td>1</td>
-                                <td>2</td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td>4</td>
-                                <td>5</td>
-                                <td>6</td>
-                                <td>7</td>
-                                <td>8</td>
-                                <td>9</td>
-                            </tr>
-                            <tr>
-                                <td>10</td>
-                                <td>11</td>
-                                <td>12</td>
-                                <td>13</td>
-                                <td>14</td>
-                                <td>15</td>
-                                <td>16</td>
-                            </tr>
-                            <tr>
-                                <td>17</td>
-                                <td>18</td>
-                                <td>19</td>
-                                <td>20</td>
-                                <td>21</td>
-                                <td>22</td>
-                                <td>23</td>
-                            </tr>
-                            <tr>
-                                <td>24</td>
-                                <td>25</td>
-                                <td>26</td>
-                                <td>27</td>
-                                <td>28</td>
-                                <td>29</td>
-                                <td>30</td>
-                            </tr>
+                        <tbody id="calendarBody">
+                            <!-- Calendar rows will be dynamically generated here -->
                         </tbody>
                     </table>
+
+
+
                 </div>
             </div>
         </div>
@@ -141,15 +114,43 @@
                                             <th>ADDED BY</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td><i class="fa fa-circle text-danger"></i></td>
-                                            <td>Cargo Picked up</td>
-                                            <td>1x40’ Container Truck, 1x20’ Container Truck </td>
-                                            <td>null</td>
-                                            <td>Weblinxsolution</td>
-                                            <td>Nary</td>
-                                        </tr>
+                                    <tbody id="calender_body">
+                                        @isset($orders)
+                                            @foreach ($orders as $order)
+                                                <tr>
+                                                    <td>
+                                                        <i class="fa fa-circle"
+                                                            style="color: {{ $order->ordersType[0]->color }}"></i>
+                                                    </td>
+                                                    <td>
+                                                        @foreach ($order->tracking as $track)
+                                                            {{ $track->cargo_remark != null ? $track->cargo_remark : '' }}
+                                                        @endforeach
+                                                    </td>
+                                                    <td>
+                                                        @foreach ($order->checks->unique('booking_size') as $size)
+                                                            @php
+                                                                $book = \App\Models\BookingSize::find($size->booking_size);
+                                                            @endphp
+                                                            {{ $book->booking_size }},
+                                                        @endforeach
+                                                    </td>
+                                                    <td>
+                                                        {{ $order->customer_remark }}
+                                                    </td>
+                                                    <td>
+                                                        @foreach ($order->users as $user)
+                                                            {{ $user->name }}
+                                                        @endforeach
+                                                    </td>
+                                                    <td>
+                                                        @foreach ($order->Admins as $adm)
+                                                            {{ $adm->admin }}
+                                                        @endforeach
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        @endisset
                                     </tbody>
                                 </table>
                             </div>
@@ -162,7 +163,127 @@
         </div>
         <!-- #/ container -->
     </div>
-    <!--**********************************
-                    Content body end
-                ***********************************-->
+    <!--**********************************Content body end***********************************-->
+
+    <script>
+        // Initial date for November 2024
+        let currentMonth = new Date(2024, 0, 1); // Month is zero-based (0 = January, 1 = February, ..., 11 = December)
+
+        // Function to change the month
+        function changeMonth(offset) {
+            currentMonth.setMonth(currentMonth.getMonth() + offset);
+            updateCalendar();
+        }
+
+        // Function to update the calendar based on the current month
+        function updateCalendar() {
+            const calendarBody = document.getElementById("calendarBody");
+            const currentMonthElement = document.getElementById("currentMonth");
+
+            // Clear existing calendar rows
+            calendarBody.innerHTML = "";
+
+            // Update the displayed month
+            currentMonthElement.textContent = getFormattedMonth(currentMonth);
+
+            // Logic to generate calendar rows based on the current month
+            // (You need to implement this logic based on your specific requirements)
+            // ...
+
+            // Example: Generate a simple calendar for the current month
+            const lastDay = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate();
+            let dayCount = 1;
+
+            for (let i = 0; i < 6; i++) {
+                var row = `<tr>`;
+
+                for (let j = 0; j < 7; j++) {
+                    var cell = `<td>`;
+                    if (dayCount <= lastDay) {
+                        var div =
+                            `<div onclick="filterDate(${currentMonth.getFullYear()},${currentMonth.getMonth()},${dayCount})">${dayCount}</div>`;
+                        cell += div;
+                        dayCount++; // Increment dayCount only once
+                    }
+                    cell += `</td>`;
+                    row += cell;
+                }
+                row += `</tr>`;
+                calendarBody.innerHTML += row; // Use innerHTML to append the row to the table
+            }
+        }
+
+        // Helper function to get a formatted month string
+        function getFormattedMonth(date) {
+            const options = {
+                year: "numeric",
+                month: "long"
+            };
+            return date.toLocaleDateString("en-US", options);
+        }
+
+        // Initial calendar update
+        updateCalendar();
+
+
+        function filterDate(year, month, day) {
+            // console.log(year, month + 1, day);
+            $.ajax({
+                url: "{{ route('admin.calendarAjax') }}", // corrected the syntax for route function
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    year: year,
+                    day: day,
+                    month: month + 1,
+                },
+                success: function(response) {
+                    if (response.success) {
+                        Toastify({
+                            text: response.message,
+                            duration: 3000,
+                            close: true,
+                            gravity: "top", // `top` or `bottom`
+                            position: "right", // `left`, `center` or `right`
+                            stopOnFocus: true, // Prevents dismissing of toast on hover
+                            style: {
+                                background: "green",
+                            },
+                        }).showToast();
+                        if (response.data != '') {
+                            $('#calender_body').html(response.data)
+                        } else {
+                            $('#calender_body').html(`
+                            <tr>
+                    <td></td>
+                    <td></td>
+                    <td>There is No data</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>`);
+                        }
+                    } else {
+                        Toastify({
+                            text: 'Try Again Something went Wrong!',
+                            duration: 3000,
+                            close: true,
+                            gravity: "top", // `top` or `bottom`
+                            position: "right", // `left`, `center` or `right`
+                            stopOnFocus: true, // Prevents dismissing of toast on hover
+                            style: {
+                                background: "red",
+                            },
+                        }).showToast();
+                        $('#calender_body').empty();
+                    }
+                    // $(`#append_data${order_id}`).empty().append(response);
+                    // alert(response)
+                },
+                error: function(error) {
+                    console.log('Error:', error);
+                }
+            });
+        }
+    </script>
 @endsection

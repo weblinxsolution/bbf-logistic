@@ -87,7 +87,7 @@
                             <div class="user-img c-pointer position-relative" data-toggle="dropdown">
                                 <span class="activity active"></span>
                                 <a href="javascript:void();" class="fw-bold mr-2"><i class="icon-user"></i>
-                                    <span>Weblinxsolution</span></a>
+                                    <span>Admin</span></a>
                                 <img src="{{ asset('admin/images/user/1.png') }}" height="40" width="40"
                                     alt="">
                             </div>
@@ -95,10 +95,10 @@
                                 <div class="dropdown-content-body">
                                     <ul>
 
-                                        <li>
+                                        {{-- <li>
                                             <a href="update-password.php"><i class="icon-user"></i>
                                                 <span>Update Password</span></a>
-                                        </li>
+                                        </li> --}}
 
                                         <li><a href="{{ Route('user.logout') }}"><i class="icon-key"></i>
                                                 <span>Logout</span></a>

@@ -7,12 +7,12 @@
 
         <div class="row page-titles mx-0 mt-3">
             <div class="col">
-                <h4 class="card-title">Edit Item</h4>
+                <h4 class="card-title">Edit Admin</h4>
             </div>
             <div class="col p-md-0">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="javascript:void(0)">E-Book Management</a></li>
-                    <li class="breadcrumb-item active"><a href="javascript:void(0)">Edit Item</a></li>
+                    <li class="breadcrumb-item"><a href="javascript:void(0)">Admin Management</a></li>
+                    <li class="breadcrumb-item active"><a href="javascript:void(0)">Edit Admin</a></li>
                 </ol>
             </div>
         </div>
@@ -64,7 +64,7 @@
 
                                     </div>
                                     <hr class="mt-0">
-                                    <button type="submit" class="btn btn-dark d-block ml-auto">Edit Item</button>
+                                    <button type="submit" class="btn btn-dark d-block ml-auto">Save Changes</button>
                                 </form>
                             </div>
                         </div>

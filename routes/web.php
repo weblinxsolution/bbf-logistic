@@ -22,7 +22,23 @@ Route::post('/admin/login-check', [AdminController::class, 'login_check'])->name
 Route::get('/admin/logout', [AdminController::class, 'logout'])->name('admin.logout');
 
 Route::middleware(['AdminAuth'])->prefix('admin')->group(function () {
+
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    // Route::get('/filter-dashboard', [AdminController::class, 'filter_dashboard'])->name('admin.filterDashboard');
+
+    // This Route Working For Fetch Admin
+    Route::get('/admin-management', [AdminController::class, 'admin_management'])->name('admin.adminManagement');
+
+    // This Route Working For Add Admin
+    Route::get('/add-admin', [AdminController::class, 'add_admin'])->name('admin.addAdmin');
+    Route::post('/add-admin-db', [AdminController::class, 'add_admin_db'])->name('admin.addAdminDb');
+
+    // This Route Working For Edit Admin
+    Route::get('/edit-admin/{id}', [AdminController::class, 'edit_admin'])->name('admin.editAdmin');
+    Route::post('/edit-admin-db/{id}', [AdminController::class, 'edit_admin_db'])->name('admin.editAdminDb');
+
+    // This Route Working For Delete Admin
+    Route::get('/delete-admin-db/{id}', [AdminController::class, 'delete_admin_db'])->name('admin.deleteAdminDb');
 
 
     // This Route Working For Fetch User
@@ -54,6 +70,9 @@ Route::middleware(['AdminAuth'])->prefix('admin')->group(function () {
     // This Route Working For Add Orders
     Route::post('/update-order-status/{order_id}', [AdminController::class, 'update_order_status'])->name('admin.updateOrderStatus');
 
+    // This Route Working For Delete Orders
+    Route::get('/delete-order-status/{id}', [AdminController::class, 'delete_order'])->name('admin.deleteOrder');
+
 
     // This Route Working For Add Orders
     Route::get('/edit-order/{id}', [AdminController::class, 'edit_order'])->name('admin.editOrder');
@@ -65,7 +84,12 @@ Route::middleware(['AdminAuth'])->prefix('admin')->group(function () {
     // This Route Working For Delete Admin Activity
     Route::get('/delete-admin-activity/{id}', [AdminController::class, 'admin_activity_delete'])->name('admin.deleteActivity');
 
+    // This Route Working For Calendar
     Route::get('/calendar', [AdminController::class, 'calendar'])->name('admin.calendar');
+
+    // This Route Working For Filter Calendar
+    Route::post('/ajax-calendar', [AdminController::class, 'calendarAjax'])->name('admin.calendarAjax');
+
 
 
 
@@ -83,8 +107,6 @@ Route::middleware(['AdminAuth'])->prefix('admin')->group(function () {
 
     // This Route Working For Delete Shipping Type
     Route::get('/delete-shipping-type-db/{id}', [AdminController::class, 'delete_shipping_type_db'])->name('admin.deleteShippingTypeDb');
-
-
 
     // This Route Working For Order Status
     // This Route Working For Fetch Order Status

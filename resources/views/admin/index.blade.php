@@ -1,8 +1,8 @@
 @extends('admin.layout.main')
 @section('admin')
     <!--**********************************
-                                                                                                                                                                                                                                                                                                                                                                                                                                                    Content body start
-                                                                                                                                                                                                                                                                                                                                                                                                                                                ***********************************-->
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            Content body start
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        ***********************************-->
     <div class="content-body">
 
         <div class="container-fluid mt-3">
@@ -61,25 +61,24 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="basic-form">
-                                <form>
-                                    <div class="form-row">
-                                        <div class="form-group col-md-8">
-
+                                <form action="{{ Route('admin.dashboard') }}" method="GET">
+                                    <div class="form-row gap-2" style="display: flex; gap:10px;justify-content: end">
+                                        <div class="form-group">
+                                            <input type="date" class="form-control" name="start_date" placeholder="Start Date">
                                         </div>
-                                        <div class="form-group col-md-1">
-                                            <input type="date" class="form-control" placeholder="Name">
+                                        <div class="form-group">
+                                            <input type="date" class="form-control" name="end_date" placeholder="End Date">
                                         </div>
-                                        <div class="form-group col-md-1">
-                                            <input type="date" class="form-control" placeholder="Name">
-                                        </div>
-                                        <div class="form-group col-md-1">
-                                            <select class="form-control">
-                                                <option>Select main type</option>
-                                                <option>Import</option>
-                                                <option>Export</option>
+                                        <div class="form-group">
+                                            <select class="form-control" name="type">
+                                                <option selected disabled>Select main type</option>
+                                                @foreach ($shipping_type as $type)
+                                                    <option value="{{ $type->id }}">{{ $type->main_type }}</option>
+                                                @endforeach
                                             </select>
+                                            <input type="hidden" name="submit" value="submit" id="">
                                         </div>
-                                        <div class="form-group col-md-1">
+                                        <div class="form-group">
                                             <button type="submit" class="btn btn-dark d-block w-100 h-100">Submit</button>
                                         </div>
                                     </div>
@@ -109,14 +108,13 @@
                                                     </td>
                                                     <td>
                                                         @php
-                                                            $date1 = \Carbon\Carbon::parse($order->created_order_date);
+                                                            $date1 = \Carbon\Carbon::parse($order->pickup_date);
                                                             $date2 = \Carbon\Carbon::parse($order->final_order_date);
                                                             $diffInDays = $date1->diffInDays($date2);
                                                         @endphp
                                                         {{ $diffInDays }} Days
                                                     </td>
-                                                    <td>2 days</td>
-
+                                                    <td>{{ $order->storage_days }}</td>
                                                 </tr>
                                             @endforeach
                                         @endisset
